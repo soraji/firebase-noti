@@ -59,8 +59,9 @@ function subscribeToNotifications() {
 
         FIREBASE_DATABASE.ref('currentToken').push({
         	currentToken : currentToken,
-        	uid: FIREBASE_AUTH.currentUser.uid
+          uid: FIREBASE_AUTH.currentUser.uid
         });
+        console.log(FIREBASE_AUTH.currentUser)
 	})
 	.then(() => checkSubscription())
 	.catch(function(err) {
@@ -80,9 +81,9 @@ function handleTokenRefresh() {
 
 function unsubscribeFromNotifications() {
   FIREBASE_MESSAGING.getToken()
-    .then((token) => {
-    		console.log(token)
-    		FIREBASE_MESSAGING.deleteToken(token)
+    .then((currentToken) => {
+    		console.log(currentToken)
+    		FIREBASE_MESSAGING.deleteToken(currentToken)
     })
     .then(() => FIREBASE_DATABASE.ref('currentToken').orderByChild("uid").equalTo(FIREBASE_AUTH.currentUser.uid).once('value'))
     .then((snapshot) => {
@@ -97,7 +98,7 @@ function unsubscribeFromNotifications() {
 }
 
 function checkSubscription() {
-  FIREBASE_DATABASE.ref('tokens').orderByChild("uid").equalTo(FIREBASE_AUTH.currentUser.uid).once('value').then((snapshot) => {
+  FIREBASE_DATABASE.ref('currentToken').orderByChild("uid").equalTo(FIREBASE_AUTH.currentUser.uid).once('value').then((snapshot) => {
     if ( snapshot.val() ) {
       subscribeButton.setAttribute("hidden", "true");
       unsubscribeButton.removeAttribute("hidden");
@@ -132,3 +133,6 @@ function sendNotification(e) {
 
 
 }
+
+
+
