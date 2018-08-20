@@ -15,54 +15,36 @@ admin.initializeApp({
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  * /notifications/{notificationId}
  */
-exports.sendNotifications = functions.database.ref('/notifications/{notificationId}')
-    .onWrite((change, context) => {
-      const followerUid = context.params.notificationId;
-      
-      // const followedUid = context.params.followedUid;
-      
-      // If un-follow we exit the function.
-      if (!change.after.val()) {
-      }
+const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value');
+  return getDeviceTokensPromise.then((data)=>{
+    if(!data.val()){
+      console.log("data don't exist")
+    } 
 
-      // Notification details.
-      const NOTI_SNAPSHOT = change.after.val(); 
-      console.log("d"+ NOTI_SNAPSHOT);
-      const payload = {
-        data: {
-          title: NOTI_SNAPSHOT.user,
-          body: NOTI_SNAPSHOT.message,
-          icon: NOTI_SNAPSHOT.userProfileImg
+    const snapshot = data.val();
+    // console.log(snapshot);
+    const tokens = [];
+
+    for (let key in snapshot){
+      tokens.push(snapshot[key].currentToken); 
+    }
+
+    // console.log("this is TOKEN: " + tokens);
+    const SNAPSHOT = change.after.val();
+    const msg = {
+        notification: {
+          title: SNAPSHOT.user,
+          body: SNAPSHOT.message,
+          icon: SNAPSHOT.userProfileImg
         }
       };
-      console.log("this is original payload:" + payload);
+    console.log(msg);
 
-      const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value');
-      return getDeviceTokensPromise.then((data)=>{
-        if(!data.val()){
-          console.log("data don't exist")
-        } 
-
-        const snapshot = data.val();
-        // console.log(snapshot);
-        const tokens = [];
-
-        for (let key in snapshot){
-          tokens.push(snapshot[key].currentToken); 
-        }
-
-        console.log("this is TOKEN: " + tokens);
-        // console.log("this is payload: " + payload);
-
-        // admin.messaging().sendToDevice(tokens, payload)
-        // .then(function(response){
-        //   console.log("success!",response);
-        // })
-        // .catch(function(error){
-        //   console.log("fail to send :( ",error);
-        // })
-      });
-      // Send notifications to all tokens.
-
-      
-    });
+    admin.messaging().sendToDevice(tokens, msg)
+    .then(function(response){
+      console.log("success!",response);
+    })
+    .catch(function(error){
+      console.log("fail to send :( ",error);
+    })
+});
