@@ -15,7 +15,7 @@ admin.initializeApp({
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  * /notifications/{notificationId}
  */
-<<<<<<< HEAD
+
 exports.sendNotifications = functions.database.ref('/notifications/{notificationId}')
     .onWrite((change, context) => {
 
@@ -72,7 +72,7 @@ exports.sendNotifications = functions.database.ref('/notifications/{notification
       });
       // Send notifications to all tokens.
     });
-=======
+
 const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value');
   return getDeviceTokensPromise.then((data)=>{
     if(!data.val()){
@@ -89,14 +89,14 @@ const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value
 
     // console.log("this is TOKEN: " + tokens);
     const SNAPSHOT = change.after.val();
-    const msg = {
+    const abc = {
         notification: {
           title: SNAPSHOT.user,
           body: SNAPSHOT.message,
           icon: SNAPSHOT.userProfileImg
         }
       };
-    console.log(msg);
+    console.log(abc);
 
     admin.messaging().sendToDevice(tokens, msg)
     .then(function(response){
@@ -106,4 +106,3 @@ const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value
       console.log("fail to send :( ",error);
     })
 });
->>>>>>> cd49d6871c02944fc277bcfc314b51748d0a9a2d
