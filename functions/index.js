@@ -15,6 +15,64 @@ admin.initializeApp({
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  * /notifications/{notificationId}
  */
+<<<<<<< HEAD
+exports.sendNotifications = functions.database.ref('/notifications/{notificationId}')
+    .onWrite((change, context) => {
+
+      const followerUid = context.params.notificationId;
+
+      // If un-follow we exit the function.
+      if (!change.after.val()) {
+        console.log(followerUid);
+      }
+
+      // Notification details.
+      // const NOTI_SNAPSHOT = change.after.val(); 
+      // console.log("d"+ NOTI_SNAPSHOT);
+      // const payload = {
+      //   data: {
+      //     title: NOTI_SNAPSHOT.user,
+      //     body: NOTI_SNAPSHOT.message,
+      //     icon: NOTI_SNAPSHOT.userProfileImg
+      //   }
+      // };
+      
+      const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value');
+      return getDeviceTokensPromise.then((data)=>{
+        if(!data.val()){
+          console.log("data don't exist")
+        } 
+
+        const snapshot = data.val();
+        // console.log(snapshot);
+        const tokens = [];
+
+        for (let key in snapshot){
+          tokens.push(snapshot[key].currentToken); 
+        }
+
+        // console.log("this is TOKEN: " + tokens);
+        const SNAPSHOT = change.after.val();
+        const msg = {
+            notification: {
+              title: SNAPSHOT.user,
+              body: SNAPSHOT.message,
+              icon: SNAPSHOT.userProfileImg
+            }
+          };
+        console.log(msg);
+
+        admin.messaging().sendToDevice(tokens, msg)
+        .then(function(response){
+          console.log("success!",response);
+        })
+        .catch(function(error){
+          console.log("fail to send :( ",error);
+        })
+      });
+      // Send notifications to all tokens.
+    });
+=======
 const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value');
   return getDeviceTokensPromise.then((data)=>{
     if(!data.val()){
@@ -48,3 +106,4 @@ const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value
       console.log("fail to send :( ",error);
     })
 });
+>>>>>>> cd49d6871c02944fc277bcfc314b51748d0a9a2d
