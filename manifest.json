@@ -1,0 +1,7 @@
+{
+  "name": "firebase noti",
+  "short_name": "firebase-noti",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": "./"
+}
