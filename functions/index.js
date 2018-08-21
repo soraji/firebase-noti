@@ -32,10 +32,10 @@ const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value
     // console.log("this is TOKEN: " + tokens);
     const SNAPSHOT = change.after.val();
     const msg = {
-        notification: {
-          title: SNAPSHOT.user,
-          body: SNAPSHOT.message,
-          icon: SNAPSHOT.userProfileImg
+        "notification": {
+          "title": SNAPSHOT.user,
+          "body": SNAPSHOT.message,
+          "icon": SNAPSHOT.userProfileImg
         }
       };
     console.log(msg);
