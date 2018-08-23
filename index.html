@@ -41,5 +41,33 @@
   <script src="/__/firebase/init.js"></script>
 
   <script src="js/main.js"></script>
+  <script>
+    // Handle incoming messages. Called when:
+    // - a message is received while the app has focus
+    // - the user clicks on an app notification created by a service worker
+    //   `messaging.setBackgroundMessageHandler` handler.
+    //웹이 포그라운드 상태일때
+    messaging.onMessage(function(payload) {
+      console.log('Message received. ', payload);
+      var notificationTitle = 'Background Message Title';
+      var notificationOptions = {
+        body: 'for foground',
+        icon: '/firebase-logo.png'
+      };
+    });
+
+    messaging.setBackgroundMessageHandler(function(payload) {
+      console.log('[firebase-messaging-sw.js] Received background message ', payload);
+      // Customize notification here
+      var notificationTitle = 'Background Message Title';
+      var notificationOptions = {
+        body: 'For Background',
+        icon: '/firebase-logo.png'
+      };
+
+      return self.registration.showNotification(notificationTitle,
+        notificationOptions);
+    });
+  </script>
 </body>
 </html>
