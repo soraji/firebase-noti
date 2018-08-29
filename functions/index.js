@@ -45,16 +45,16 @@ const getDeviceTokensPromise = admin.database().ref(`/currentToken`).once('value
     // console.log("this is TOKEN: " + tokens);
     const SNAPSHOT = change.after.val();
 
-    const abc = {
+    const payload = {
         notification: {
           title: SNAPSHOT.user,
           body: SNAPSHOT.message,
           icon: SNAPSHOT.userProfileImg
         }
       };
-    console.log(abc);
+    console.log(payload);
 
-    admin.messaging().sendToDevice(tokens, msg)
+    admin.messaging().sendToDevice(tokens, payload)
     .then(function(response){
       console.log("success!",response);
     })
